@@ -54,12 +54,24 @@ export class PCFGrid extends React.Component<IPCFGridProps> {
 
 
     private _onChangeText = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text: string | undefined): void=> {
-       
+       let searchableColumnList = this.props.crmContext.parameters.searchableColumnLogicalNameList.raw || "";
+       let filterRecords:any [] =new Array();
+       if(searchableColumnList && searchableColumnList !="") {
+        searchableColumnList.split(",").forEach((searchableColumn:string) => {
+           let basedColumFilteredRecords =this.props.gridRecords.filter(i => i[searchableColumn].toLowerCase().indexOf(text?.toLowerCase()) > -1);
+           filterRecords= [...basedColumFilteredRecords];
+            
+        });
+
+       }
+       else{
+        filterRecords =this.props.gridRecords;
+       }
+
+
         this.setState({
             isFilter:(text && text!=""),
-            gridFilterRecords: (text && text!="") ? 
-            
-            this.props.gridRecords.filter(i => i.name.toLowerCase().indexOf(text) > -1) :this.props.gridRecords,
+            gridFilterRecords: (text && text!="") ? filterRecords :this.props.gridRecords,
         });
       };
     public render() {
